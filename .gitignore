@@ -1,0 +1,59 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# Python cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables and secrets
+.env
+
+# Local UI preferences (per-device)
+config/active_theme.json
+config/active_dark_mode.json
+
+# Live site config (template is config/pccs.conf.dist — do not commit secrets)
+config/pccs.conf
+
+# Logs and temporary files
+logs/
+*.log
+
+# Web project dependencies and build outputs
+node_modules/
+frontend/node_modules/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+dist/
+build/
+
+# Downloaded installers (see README — UniFi OS Server)
+unifiosinstaller
+
+# GitHub wiki lives in its own repo (bind-mounted from ~/pccs5.wiki)
+wiki/
+
+# Never commit SSH / deploy keys (public or private)
+GITHUB_DEPLOY_KEY.pub
+*_deploy
+*_deploy.pub
+id_ed25519
+id_ed25519.pub
+id_rsa
+id_rsa.pub
+
+# System and editor files
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+.lgd-nfy0
+.tmp
+bin/
+bv.sh
