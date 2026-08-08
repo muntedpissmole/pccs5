@@ -1,51 +1,75 @@
 # The Pissmole Camper Control System
 
-The PCCS is an automation and electrical control system for a caravan or camper trailer.
+PCCS is a software and hardware solution for control of electrics and home automation in a caravan or camper trailer. It replaces a typical switch panel and gauges like water and battery levels with a modern touchscreen UI that provides control of dimmable lighting, one-touch activation of lighting scenes and automatic triggering of lights based on sunset/sunrise times and door or panel open and closes. The software runs on a Raspberry Pi 4 or 5. A PCB design for ordering the PCCS Core circuit board and 3D printable mount is provided in the `/kicad` folder.
 
-It runs on a Raspberry Pi fitted to a purpose-built PCB, the PCCS Core, which carries the dual ESP32s, GPS module, Victron Bluetooth link, and relays. See [Wiring and Hardware](https://github.com/muntedpissmole/pccs5/wiki/Wiring-and-Hardware) before you start.
+Important information is displayed at a glance (full list and screenshots below). Internet can be distributed from a USB/Wi-Fi hotspot or Starlink through a downstream WAP. Networking services - NAT, DNS, DHCP and ad-filtering are provided by nftables and Pi-Hole. Instructions are provided for installing the UniFi OS server for management of WAP points if desired.
 
-## Quick start
+The UI is accessible from any device connected to the WiFi and can also be accessed remotely via something like a Cloudflare tunnel.
 
-```bash
-sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/muntedpissmole/pccs5/main/install.sh)"
-```
+## Getting started
 
-Runs on a Raspberry Pi 4/5 with Debian Trixie, fitted to the PCCS Core PCB. Full walkthrough, including flashing the SD card and finishing hardware setup: [Software Installation](https://github.com/muntedpissmole/pccs5/wiki/Software-Installation).
+Start with [Wiring and Hardware](https://github.com/muntedpissmole/pccs5/wiki/Wiring-and-Hardware) to fabricate, mount and wire the PCCS Core PCB, then see [Software Installation](https://github.com/muntedpissmole/pccs5/wiki/Software-Installation) to install the PCCS via the guided installer.
+
+Full instructions are in the [project wiki](https://github.com/muntedpissmole/pccs5/wiki/).
 
 ## System overview
 
-A touchscreen in the kitchen or common area shows the main user interface, also reachable from phones or tablets on the LAN:
+A touchscreen in the kitchen or similar area shows the main user interface and is also reachable from phones or tablets on the LAN:
 
-- Dimmable lighting sliders (with red/white anti-bug mode) and on/off buttons for non-dimmable loads (water, lighting, fridge circuits)
-- One-tap lighting scenes, Sonos control, and toast notifications
-- Light/dark UI themes, a diagnostics tab with manual overrides, and detailed logging
+- Dimmable lighting sliders with red/white anti-bug mode and on/off buttons for non-dimmable loads (water, lighting, fridge circuits)
+- Ambient lights that fade on as it gets dark
+- One-touch lighting scenes
+- Control of Sonos speakers
+- Light/dark UI themes and an extensive settings page
 
-## Environmental information
+## Display of Environmental information
 
-- Water tank level; outside, fridge, and freezer temperatures
-- Battery and solar: charge, voltage, current, estimated time remaining, daily solar yield (via Victron)
-- Location: GPS coordinates, closest suburb, altitude, satellite quality, sunrise/sunset, and the day/evening/night timing that drives automation
-- Weather forecast and humidity when online; internet connection details
-- Sonos now-playing info; which lights are on; which doors or panels are open
-- Health status of connected hardware modules (e.g. solar or GPS)
+- Water tank level
+- Current temperature and fridge/freezer temperatures
+- Current battery charge, voltage, current consumption, estimated power remaining and current/daily solar generation
+- GPS coordinates, closest suburb, altitude, satellite quality, sunrise/sunset, and the day/evening/night timing that drives automation
+- 4 Day weather forecast, humidity and expected overnight temperature if Internet is present
+- Internet connection quality details
+- What lights are on and what doors or panels are open
+- Health status of connected hardware modules like solar or GPS
 
 ## Hardware architecture
 
 - Raspberry Pi 4/5
-- Dual ESP32-S3s for PWM dimming via MOSFETs
+- Dual ESP32-S3s for 16 channels of PWM dimming via MOSFETs
 - u-blox NEO-M9N GPS for location data
-- Victron SmartShunt and SmartSolar for battery and solar monitoring
+- Victron SmartShunt and SmartSolar support for battery and solar monitoring
 - WS281X addressable LED strip outputs
-- 10 A relays for non-dimmable loads
-- Reed switch inputs for door/panel sensing
-- 1-Wire bus for DS18B20 temperature sensors
-- Resistive water tank level sensor input
+- 10A relays for non-dimmable loads like lighting circuits, floodlights and water pumps
+- Reed switch inputs for door/panel sensing and triggering of lights
+- 1-Wire bus for temperature sensors
+- Water tank level sensor input
+- Spare channels for everything for expansion
 
----
+### PCCS Core
+
+<table>
+  <tr>
+    <td align="center" width="50%"><img src="images/pccs_core_top.png" alt="PCCS Core — top, bare board"></td>
+    <td align="center" width="50%"><img src="images/pccs_core_top_with_pi.png" alt="PCCS Core — top, with Raspberry Pi fitted"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Top (bare board)</strong></td>
+    <td align="center"><strong>Top (with Raspberry Pi fitted)</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="images/pccs_core_bottom.png" alt="PCCS Core — bottom"></td>
+    <td align="center"><img src="images/pccs_core_isometric.png" alt="PCCS Core — isometric view with Raspberry Pi fitted"></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Bottom</strong></td>
+    <td align="center"><strong>Isometric (with Raspberry Pi fitted)</strong></td>
+  </tr>
+</table>
 
 ## User interface
 
-The UI runs on touchscreens, tablets, and phones. Red indicators mark bug-mode-capable lights.
+The UI runs on touchscreens, tablets, and phones.
 
 <table>
   <tr>
