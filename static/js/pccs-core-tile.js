@@ -90,12 +90,30 @@
             </div>`;
     }
 
+    /**
+     * If every module the PCCS Core PCB hosts (solar, shunt, ESP32, GPS) is
+     * offline at once, the simplest explanation is the board itself is
+     * unplugged/unpowered — surface that instead of 4 separate "Offline"
+     * readings. Broadcast the verdict so other Settings tiles (GPS, Victron)
+     * can fold it into their own offline messaging.
+     */
+    function updateCoreConnectivity(online, total) {
+        const connected = total > 0 ? online > 0 : true;
+        window.PCCS5 = window.PCCS5 || {};
+        window.PCCS5.core = { online, total, connected };
+        document.dispatchEvent(new CustomEvent('pccs5:core-connectivity', { detail: window.PCCS5.core }));
+        return connected;
+    }
+
     function renderSummary(data, view) {
         const online = data.online_count ?? 0;
         const total = data.total_count ?? 0;
         const healthy = view.throttling_ok !== false;
+        const coreConnected = updateCoreConnectivity(online, total);
 
-        headlineEl.textContent = `${online} of ${total} modules online · ${view.hostname || 'PCCS'}`;
+        headlineEl.textContent = coreConnected
+            ? `${online} of ${total} modules online · ${view.hostname || 'PCCS'}`
+            : 'PCCS Core not connected';
 
         const throttle = view.throttling_status || 'Unknown';
         const uptime = view.uptime_human || '—';

@@ -191,8 +191,13 @@
             if (els.headline) els.headline.textContent = 'Victron not configured';
             if (els.detail) els.detail.textContent = 'Add device MAC addresses and keys under [victron] in pccs.conf';
         } else if (data?.stale && !anyLive) {
-            if (els.headline) els.headline.textContent = 'Waiting for BLE data';
-            if (els.detail) els.detail.textContent = 'Listening for Instant Readout advertisements';
+            const coreDisconnected = window.PCCS5?.core?.connected === false;
+            if (els.headline) {
+                els.headline.textContent = coreDisconnected ? 'PCCS Core not connected' : 'Waiting for BLE data';
+            }
+            if (els.detail) {
+                els.detail.textContent = 'Listening for Instant Readout advertisements';
+            }
         } else {
             const parts = [];
             if (shunt.configured && shunt.soc != null) {
@@ -218,8 +223,11 @@
         }
     }
 
+    let lastData = null;
+
     function update(data) {
         if (!data) return;
+        lastData = data;
         renderSummary(data);
         renderShunt(data.shunt);
         renderMppt(data.mppt);
@@ -247,6 +255,9 @@
 
     fetchVictron();
     setInterval(fetchIfNeeded, POLL_INTERVAL_MS);
+    document.addEventListener('pccs5:core-connectivity', () => {
+        if (lastData) renderSummary(lastData);
+    });
 
     window.victronSystemTile = { update, refresh: fetchVictron, onVictronUpdate };
 })();

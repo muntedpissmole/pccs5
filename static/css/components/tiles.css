@@ -21,20 +21,21 @@
 @media (min-width: 157.5625rem) {
     .tile-grid {
         grid-template-columns: repeat(9, minmax(0, 1fr));
+        grid-auto-flow: dense;
     }
 
-    /* 9-col: 2 even rows — weather beside date/time, network last on the right */
-    #tile-datetime { order: 1; }
-    #tile-climate { order: 2; }
-    #tile-water { order: 3; }
-    #tile-sonos { order: 4; }
-    #tile-power { order: 5; }
-    #tile-gps { order: 6; }
-    #tile-appearance { order: 7; }
+    /* 9-col: 2 even rows — critical resources (power/water) lead, settings trail */
+    #tile-power { order: 1; }
+    #tile-water { order: 2; }
+    #tile-network { order: 3; }
+    #tile-datetime { order: 4; }
+    #tile-climate { order: 5; }
+    #tile-system { order: 6; }
+    #tile-gps { order: 7; }
     #tile-lighting-home { order: 8; }
-    #tile-reeds { order: 9; }
-    #tile-system { order: 10; }
-    #tile-network { order: 11; }
+    #tile-sonos { order: 9; }
+    #tile-reeds { order: 10; }
+    #tile-appearance { order: 11; }
 }
 
 @media (min-width: 70.0625rem) and (max-width: 157.5rem) {
@@ -50,22 +51,23 @@
         height: 100%;
     }
 
-    /* 6-col: weather 1 col left; location + panels stacked on its right */
-    #tile-datetime { grid-column: 1 / span 2; grid-row: 1; }
-    #tile-network { grid-column: 3; grid-row: 1; }
-    #tile-water { grid-column: 4; grid-row: 1; }
-    .tile-grid > #tile-sonos { grid-column: 5 / span 2; grid-row: 1; align-self: stretch; }
-    .tile-grid > #tile-power { grid-column: 1 / span 2; grid-row: 2; align-self: stretch; }
-    #tile-appearance { grid-column: 3; grid-row: 2; }
+    /* 6-col: critical resources (power/water) get top-left prominence; settings
+       and amenities (sonos, appearance) sink to the bottom row */
+    .tile-grid > #tile-power { grid-column: 1 / span 2; grid-row: 1; align-self: stretch; }
+    #tile-water { grid-column: 3; grid-row: 1; }
+    #tile-network { grid-column: 4; grid-row: 1; }
+    #tile-datetime { grid-column: 5 / span 2; grid-row: 1; }
     .tile-grid > #tile-climate {
-        grid-column: 4 / span 2;
+        grid-column: 1 / span 2;
         grid-row: 2 / span 2;
         min-height: calc(13rem * 2 + var(--space-tile-gap));
     }
-    #tile-gps { grid-column: 6; grid-row: 2; }
-    .tile-grid > #tile-lighting-home { grid-column: 1; grid-row: 3; }
-    .tile-grid > #tile-system { grid-column: 2 / span 2; grid-row: 3; }
-    .tile-grid > #tile-reeds { grid-column: 6; grid-row: 3; }
+    .tile-grid > #tile-system { grid-column: 3 / span 2; grid-row: 2; }
+    #tile-gps { grid-column: 5; grid-row: 2; }
+    .tile-grid > #tile-lighting-home { grid-column: 6; grid-row: 2; }
+    .tile-grid > #tile-sonos { grid-column: 3 / span 2; grid-row: 3; align-self: stretch; }
+    .tile-grid > #tile-reeds { grid-column: 5; grid-row: 3; }
+    #tile-appearance { grid-column: 6; grid-row: 3; }
 }
 
 .tile {
@@ -212,7 +214,16 @@
 @media (min-width: 45.0625rem) and (max-width: 70rem) {
     .tile-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+        /* dense: backfill any gap left beside a span-2/row-span-2 tile
+           (e.g. Weather) instead of stranding it as blank space */
+        grid-auto-flow: dense;
     }
+
+    /* Panels/System land side by side in the same row under dense packing;
+       pin them explicitly so Panels (smaller, lighter) sits left of System
+       (the 2-wide status readout) instead of the reverse. */
+    #tile-reeds { grid-column: 1; grid-row: 5; }
+    #tile-system { grid-column: 2 / span 2; grid-row: 5; }
 }
 
 @media (max-width: 45rem) {

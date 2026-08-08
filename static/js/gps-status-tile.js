@@ -139,8 +139,13 @@
         return 'Waiting for GPS data';
     }
 
+    /** True only once the PCCS Core tile has confirmed every module is offline. */
+    function isCoreDisconnected() {
+        return window.PCCS5?.core?.connected === false;
+    }
+
     function getHeadline(data) {
-        if (data.hardware_missing) return 'Hardware unavailable';
+        if (data.hardware_missing) return isCoreDisconnected() ? 'PCCS Core not connected' : 'Hardware unavailable';
         if ((data.fix_quality ?? 0) < 1) return 'Searching for fix';
         return data.suburb || formatFixLabel(data);
     }
@@ -335,6 +340,9 @@
     bindControls();
     render();
     setInterval(pollGps, GPS_POLL_MS);
+    document.addEventListener('pccs5:core-connectivity', () => {
+        if (getDisplayData().hardware_missing) render();
+    });
 
     window.PCCS5 = window.PCCS5 || {};
     window.PCCS5.gpsStatus = {

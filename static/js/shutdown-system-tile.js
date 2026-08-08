@@ -74,7 +74,7 @@
         const screenCount = state.screens.length;
         headlineEl.textContent = screenCount
             ? `Power off ${screenCount + 1} devices`
-            : 'Power off PCCS Core';
+            : 'Shutdown PCCS';
 
         if (state.shuttingDown) {
             detailEl.textContent = 'Shutdown in progress…';

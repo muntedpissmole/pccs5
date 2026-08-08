@@ -65,7 +65,26 @@
         return status !== false;
     }
 
+    // User preference (Appearance tile checkbox): show every hardware tile
+    // regardless of module status. Toggled/persisted by show-disconnected-tiles.js.
+    let showDisconnected = false;
+
+    function setShowDisconnected(value) {
+        showDisconnected = value === true;
+        applyVisibility();
+    }
+
     function applyVisibility() {
+        if (showDisconnected) {
+            let forcedChanged = false;
+            ['tile-gps', 'tile-water', 'tile-lighting-home', 'tile-power', 'tile-sonos'].forEach((id) => {
+                forcedChanged = setTileVisible(id, true) || forcedChanged;
+            });
+            if (forcedChanged) refreshLayout();
+            else syncGridReflow();
+            return;
+        }
+
         let changed = false;
 
         changed = setTileVisible('tile-gps', visibleIfOnline(moduleOnline.gps)) || changed;
@@ -118,6 +137,7 @@
     window.PCCS5.homeModuleVisibility = {
         applyModuleStatus,
         setSonosOnline,
+        setShowDisconnected,
         refresh: applyVisibility,
     };
 })();

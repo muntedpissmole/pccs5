@@ -11,6 +11,16 @@
         activatingScene: null,
     };
 
+    // Scenes can't meaningfully activate without the ESP32s (dimmer/RGB lights
+    // live there) — same gating as the Lighting tab, same override checkbox.
+    /** null = unknown (show scenes to avoid flash-on-load); false hides them */
+    let esp32Online = null;
+    let forceShowDisconnected = false;
+
+    function scenesAvailable() {
+        return forceShowDisconnected || esp32Online !== false;
+    }
+
     function getSocket() {
         return window.PCCS5?.socket ?? null;
     }
@@ -124,6 +134,11 @@
             return;
         }
 
+        if (!scenesAvailable()) {
+            container.innerHTML = '<p class="hardware-offline-notice">Lighting hardware offline</p>';
+            return;
+        }
+
         state.currentScenes.forEach((scene) => {
             const btn = document.createElement('button');
             btn.type = 'button';
@@ -180,6 +195,20 @@
         window.addEventListener('resize', onResize);
     }
 
+    function setEsp32Online(online) {
+        const next = online === true ? true : online === false ? false : null;
+        if (next === null || esp32Online === next) return;
+        esp32Online = next;
+        renderScenes();
+    }
+
+    function setShowDisconnected(value) {
+        const next = value === true;
+        if (forceShowDisconnected === next) return;
+        forceShowDisconnected = next;
+        renderScenes();
+    }
+
     window.PCCS5 = window.PCCS5 || {};
     window.PCCS5.scenes = {
         loadScenes,
@@ -187,6 +216,8 @@
         renderScenes,
         onStateUpdate,
         setActiveScene,
+        setEsp32Online,
+        setShowDisconnected,
         isBackendLoaded: () => state.backendLoaded,
     };
 

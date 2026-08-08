@@ -95,9 +95,10 @@
 
                 const connected = module.connected ?? module.online ?? module.status === 'online';
 
-                // Hide ESP-driven lighting controls when the MCU is offline.
+                // Hide ESP-driven lighting controls (and scenes, which depend on them) when the MCU is offline.
                 if (id === 'esp32') {
                     window.PCCS5?.lighting?.setEsp32Online?.(connected === true);
+                    window.PCCS5?.scenes?.setEsp32Online?.(connected === true);
                 }
 
                 const row = els.modules[id];

@@ -86,6 +86,29 @@ html.light .appearance-tile__select {
     box-shadow: 0 0 0 2px var(--color-accent-glow);
 }
 
+.appearance-tile__checkbox {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.45rem;
+    min-width: 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    line-height: 1.25;
+    cursor: pointer;
+    user-select: none;
+}
+
+.appearance-tile__checkbox input {
+    flex-shrink: 0;
+    width: 0.95rem;
+    height: 0.95rem;
+    margin: 0;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
 .appearance-tile__footer {
     display: flex;
     flex-shrink: 0;

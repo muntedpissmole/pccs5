@@ -14,6 +14,8 @@
     let reedActivating = false;
     /** null = unknown (show ESP lights to avoid flash-on-load); false hides them */
     let esp32Online = null;
+    /** User preference (Settings → Appearance): show ESP-driven lights even when the MCU is offline. */
+    let forceShowDisconnected = false;
     const sceneAnimationCancels = {};
 
     const state = {
@@ -27,14 +29,12 @@
         locallyAnimating: new Set(),
     };
 
-    /** Dimmer/RGB lights need an ESP MCU; relays are Pi GPIO and stay available. */
-    function isEspDrivenLight(light) {
-        return light && light.type !== 'relay';
-    }
-
+    // Relays are GPIO-driven rather than ESP-driven, but they're still wired
+    // through the PCCS Core PCB — if the core's unreachable, relay channels
+    // are just as dead as the dimmer/RGB lights, so they hide too.
     function getVisibleLights() {
-        if (esp32Online !== false) return state.lightsConfig;
-        return state.lightsConfig.filter((light) => !isEspDrivenLight(light));
+        if (forceShowDisconnected || esp32Online !== false) return state.lightsConfig;
+        return [];
     }
 
     let lastTouchPointerUp = 0;
@@ -777,7 +777,7 @@
         if (!visibleLights.length) {
             const offline = esp32Online === false;
             container.innerHTML = offline
-                ? '<p class="lighting-connecting">Lighting hardware offline</p>'
+                ? '<p class="hardware-offline-notice">Lighting hardware offline</p>'
                 : '<p class="lighting-connecting">Connecting to lighting backend…</p>';
             return false;
         }
@@ -933,6 +933,16 @@
         }
     }
 
+    function setShowDisconnected(value) {
+        const next = value === true;
+        if (forceShowDisconnected === next) return;
+        forceShowDisconnected = next;
+        state.lastRenderConfigHash = '';
+        if (state.lightsConfig.length) {
+            renderLightingControls();
+        }
+    }
+
     function initResize() {
         function handleResizeForLighting() {
             const newCols = getCurrentColumns();
@@ -1014,6 +1024,7 @@
         initResize,
         syncFromServer,
         setEsp32Online,
+        setShowDisconnected,
         isBackendConnected() {
             return backendConnected;
         },
